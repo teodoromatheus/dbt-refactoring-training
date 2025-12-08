@@ -8,6 +8,7 @@ converted as (
             , ORDERID as order_id
             , PAYMENTMETHOD as payment_method
             , STATUS as payment_status
+            , (AMOUNT / 100.0) as payment_amount
     from source 
 )
 
