@@ -1,0 +1,17 @@
+
+sources:
+    - name: jaffle_shop
+      database: raw
+      schema: jaffle_shop
+      tables:
+        - name: customers
+          description: Raw table with customer information as name, last name and id
+        - name: orders
+          description: Raw orders table with foreign key to identify the customer who purchased it
+    
+    - name: stripe
+      database: raw
+      schema: stripe
+      tables:
+        - name: payment
+          description: Raw payment table shows transactions information as type of payment, amount and etc
