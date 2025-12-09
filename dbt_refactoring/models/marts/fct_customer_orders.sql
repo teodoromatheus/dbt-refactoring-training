@@ -1,3 +1,11 @@
+{{
+    config(
+        materialized='incremental',
+        incremental_strategy='merge',
+        unique_key='order_id'
+    )
+}}
+
 with orders as (
     select * from {{ ref('stg_jaffle_shop__orders') }}
 ),
@@ -46,3 +54,8 @@ final as (
 )
 
 select * from final
+
+{% if is_incremental() %}
+where 
+order_placed_at >= (select dateadd('day', -3, max(order_placed_at)) from {{ this }})
+{% endif %}
