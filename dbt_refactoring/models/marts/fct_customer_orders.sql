@@ -2,7 +2,8 @@
     config(
         materialized='incremental',
         incremental_strategy='merge',
-        unique_key='order_id'
+        unique_key='order_id',
+        on_schema_change='sync_all_columns'
     )
 }}
 
@@ -16,6 +17,10 @@ paid_orders as (
 
 customers as (
     select * from {{ ref('stg_jaffle_shop__customers') }}
+),
+
+employees as (
+    select * from {{ ref('employees') }}
 ),
 
 customer_orders as (
@@ -49,8 +54,10 @@ final as (
               end as nvsr
             , sum(paid_orders.total_amount_paid) over (partition by paid_orders.customer_id order by paid_orders.payment_finalized_date) as customer_lifetime_value
             , customer_orders.first_order_date as fdos
+            , employees.employee_id 
     from paid_orders
     left join customer_orders on paid_orders.customer_id = customer_orders.customer_id
+    left join employees on paid_orders.customer_id = employees.customer_id
 )
 
 select * from final
@@ -58,4 +65,4 @@ select * from final
 {% if is_incremental() %}
 where 
 order_placed_at >= (select dateadd('day', -3, max(order_placed_at)) from {{ this }})
-{% endif %}
+{% endif %} 

@@ -1,0 +1,13 @@
+snapshots:
+    - name: customers_snapshot
+      relation: source('jaffle_shop','customers')
+      config:
+        schema: snapshots
+        strategy: check
+        unique_key: ID
+        dbt_valid_to_current: "to_date('9999-12-31')"
+        check_cols:
+          - ID
+          - FIRST_NAME
+          - LAST_NAME 
+        
